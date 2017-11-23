@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 public class Enoloxia {
@@ -35,16 +34,15 @@ public class Enoloxia {
     IOException, SQLException, ClassNotFoundException, XMLStreamException {
         
         conexion();
-        
         leerfichero(archivo);
-        actualizartablas();
         
-//        recorremos el Array para poder introducir los datos en la tabla indicando sus posiciones
+        //recorremos el Array para poder introducir los datos en la tabla indicando sus posiciones
         for(int i=0; i<datos.length; i++){
             escribirdatos(datos[i][0],
-                    nombreuva(datos[i][4]),
+                    nombreuva(datos[i][4]),                   
                     acidezminmax(Integer.parseInt(datos[i][1]),datos[i][4]),
                     Integer.parseInt(datos[i][5]));
+            actualizartablas(datos[i][6]);
             }
         
     }
@@ -125,14 +123,13 @@ public class Enoloxia {
     }
     
     //actualizar numero de analisis tabla clientes
-    static void actualizartablas(){
-
-        try {   
-            PreparedStatement actualiza = conn.prepareStatement("update clientes set NUMERODEANALISIS=NUMERODEANALISIS+1");
-            actualiza.execute();
-            System.out.println("Análisis actualizado");
+    static void actualizartablas(String dni){
+        try {            
+            PreparedStatement actualiza = conn.prepareStatement("update clientes set NUMERODEANALISIS=NUMERODEANALISIS+1 where DNI=?");
+            actualiza.setString(1, dni);
+            actualiza.executeUpdate();
         } catch (SQLException ex) {
-            System.out.println("Error, introduzca el DNI correcto "+ex.getMessage());
+            System.out.println("Error"+ex.getMessage());
         }
     }
     
